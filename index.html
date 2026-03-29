@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LingsCars — Car Leasing</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; cursor: none !important; }
+
+    /* ── CUSTOM CURSOR ── */
+    #cursor {
+      position: fixed;
+      width: 12px;
+      height: 12px;
+      background-color: #E95D2C;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: width 0.2s, height 0.2s, background-color 0.2s;
+    }
+
+    #cursor.grow {
+      width: 38px;
+      height: 38px;
+      background-color: rgba(233, 93, 44, 0.25);
+      border: 2px solid #E95D2C;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #1A2730;
+      color: #F4F0EB;
+    }
+
+    /* ── NAVBAR ── */
+    nav {
+      background-color: #1A2730;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 60px;
+      border-bottom: 3px solid #E95D2C;
+    }
+
+    .logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2rem;
+      color: #E95D2C;
+      letter-spacing: 3px;
+    }
+
+    .logo span { color: #B0CEE2; }
+
+    .nav-links {
+      list-style: none;
+      display: flex;
+      gap: 30px;
+    }
+
+    .nav-links a {
+      color: #B0CEE2;
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .nav-links a:hover { color: #E95D2C; }
+
+    .nav-btn {
+      background-color: #E95D2C;
+      color: white;
+      border: none;
+      padding: 14px 36px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+    }
+
+    .nav-btn:hover { background-color: #A63E1B; }
+
+    /* ── SCROLL REVEAL ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      height: 580px;
+      overflow: hidden;
+    }
+
+    .hero img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to right, rgba(26,39,48,0.9) 40%, rgba(26,39,48,0.3));
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 0 80px;
+    }
+
+    .hero-tag {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #E95D2C;
+      margin-bottom: 14px;
+    }
+
+    .hero h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 5.5rem;
+      line-height: 1;
+      letter-spacing: 2px;
+      margin-bottom: 16px;
+    }
+
+    .hero h1 span { color: #E95D2C; }
+
+    .hero p {
+      font-size: 1rem;
+      font-weight: 300;
+      color: rgba(244,240,235,0.75);
+      max-width: 420px;
+      line-height: 1.7;
+      margin-bottom: 32px;
+    }
+
+    .hero-btns { display: flex; gap: 14px; }
+
+    .btn-orange {
+      background-color: #E95D2C;
+      color: white;
+      border: none;
+      padding: 14px 36px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+    }
+
+    .btn-orange:hover { background-color: #A63E1B; }
+
+    .btn-outline {
+      background-color: transparent;
+      color: #B0CEE2;
+      border: 2px solid #B0CEE2;
+      padding: 14px 36px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+    }
+
+    .btn-outline:hover { border-color: #E95D2C; color: #E95D2C; }
+
+    /* ── STATS BAR ── */
+    .stats-bar {
+      background-color: #424048;
+      display: flex;
+      justify-content: space-around;
+      padding: 28px 60px;
+      border-bottom: 2px solid #E95D2C;
+    }
+
+    .stat-item { text-align: center; }
+
+    .stat-item .number {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.4rem;
+      color: #E95D2C;
+      line-height: 1;
+    }
+
+    .stat-item .label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #B0CEE2;
+      margin-top: 4px;
+    }
+
+    /* ── SEARCH BAR ── */
+    .search-bar {
+      background-color: #424048;
+      padding: 28px 60px;
+    }
+
+    .search-bar p {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #E95D2C;
+      margin-bottom: 12px;
+    }
+
+    .search-inputs {
+      display: flex;
+      gap: 6px;
+    }
+
+    .search-inputs select {
+      flex: 1;
+      background-color: #1A2730;
+      border: 1px solid #45586C;
+      color: #F4F0EB;
+      padding: 12px 16px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.85rem;
+      outline: none;
+    }
+
+    .search-inputs select option { background: #1A2730; }
+
+    .search-inputs button {
+      background-color: #E95D2C;
+      color: white;
+      border: none;
+      padding: 12px 32px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .search-inputs button:hover { background-color: #A63E1B; }
+
+    /* ── SECTION TITLES ── */
+    .section { padding: 70px 60px; }
+
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.6rem;
+      letter-spacing: 2px;
+      margin-bottom: 6px;
+    }
+
+    .section-title span { color: #B0CEE2; }
+
+    .section-sub {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #E95D2C;
+      margin-bottom: 36px;
+    }
+
+    /* ── CAR CARDS ── */
+    .cars-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .car-card {
+      background-color: #424048;
+      overflow: hidden;
+    }
+
+    .car-card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .car-info { padding: 20px; }
+
+    .car-make {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #B0CEE2;
+      margin-bottom: 4px;
+    }
+
+    .car-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.8rem;
+      letter-spacing: 2px;
+      margin-bottom: 10px;
+    }
+
+    .car-details {
+      font-size: 0.8rem;
+      color: rgba(244,240,235,0.55);
+      margin-bottom: 16px;
+      line-height: 1.6;
+    }
+
+    .car-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 14px;
+      border-top: 1px solid rgba(176,206,226,0.15);
+    }
+
+    .car-price {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2rem;
+      color: #E95D2C;
+      line-height: 1;
+    }
+
+    .car-price span {
+      display: block;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.68rem;
+      color: rgba(244,240,235,0.45);
+      font-weight: 400;
+      letter-spacing: 0;
+    }
+
+    .card-btn {
+      background: #E95D2C;
+      border: 1.5px solid #E95D2C;
+      color: white;
+      padding: 8px 18px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+    }
+
+    .card-btn:hover { background-color: #A63E1B; border-color: #A63E1B; color: white; }
+
+    /* ── HOW IT WORKS ── */
+    .how-section {
+      background-color: #424048;
+      padding: 70px 60px;
+    }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-top: 36px;
+    }
+
+    .step {
+      background-color: #1A2730;
+      padding: 32px 24px;
+      border-left: 4px solid #E95D2C;
+    }
+
+    .step-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 3.5rem;
+      color: rgba(233,93,44,0.75);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .step-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #B0CEE2;
+      margin-bottom: 10px;
+    }
+
+    .step-desc {
+      font-size: 0.82rem;
+      font-weight: 300;
+      color: rgba(244,240,235,0.55);
+      line-height: 1.65;
+    }
+
+    /* ── GALLERY ── */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      grid-template-rows: 220px 220px;
+      gap: 8px;
+    }
+
+    .gallery-grid .g-item { overflow: hidden; position: relative; }
+    .gallery-grid .g-item:first-child { grid-row: span 2; }
+
+    .gallery-grid img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: brightness(0.75);
+      transition: filter 0.3s;
+    }
+
+    .gallery-grid .g-item:hover img { filter: brightness(0.95); }
+
+    .g-label {
+      position: absolute;
+      bottom: 14px; left: 16px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: rgba(244,240,235,0.8);
+    }
+
+    /* ── TESTIMONIALS ── */
+    .testi-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .testi-card {
+      background-color: #424048;
+      padding: 28px 24px;
+      border-top: 3px solid #E95D2C;
+    }
+
+    .testi-text {
+      font-size: 0.88rem;
+      font-weight: 300;
+      color: rgba(244,240,235,0.72);
+      line-height: 1.75;
+      font-style: italic;
+      margin-bottom: 20px;
+    }
+
+    .testi-name {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #B0CEE2;
+    }
+
+    .testi-stars {
+      color: #E95D2C;
+      font-size: 0.85rem;
+      margin-top: 4px;
+    }
+
+    /* ── CTA BANNER ── */
+    .cta-banner {
+      position: relative;
+      height: 300px;
+      overflow: hidden;
+    }
+
+    .cta-banner img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 60%;
+      display: block;
+    }
+
+    .cta-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(26,39,48,0.82);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px;
+    }
+
+    .cta-overlay h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 3.2rem;
+      letter-spacing: 3px;
+      margin-bottom: 12px;
+    }
+
+    .cta-overlay h2 span { color: #E95D2C; }
+
+    .cta-overlay p {
+      font-size: 0.9rem;
+      font-weight: 300;
+      color: rgba(244,240,235,0.65);
+      margin-bottom: 28px;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background-color: #111820;
+      padding: 50px 60px 28px;
+      border-top: 3px solid #E95D2C;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 48px;
+      margin-bottom: 40px;
+    }
+
+    .footer-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.8rem;
+      color: #E95D2C;
+      letter-spacing: 3px;
+      margin-bottom: 12px;
+    }
+
+    .footer-logo span { color: #B0CEE2; }
+
+    .footer-about {
+      font-size: 0.82rem;
+      font-weight: 300;
+      color: rgba(244,240,235,0.4);
+      line-height: 1.7;
+    }
+
+    .footer-col h4 {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #E95D2C;
+      margin-bottom: 16px;
+    }
+
+    .footer-col ul { list-style: none; }
+
+    .footer-col ul li { margin-bottom: 10px; }
+
+    .footer-col ul a {
+      font-size: 0.82rem;
+      font-weight: 300;
+      color: rgba(244,240,235,0.45);
+      text-decoration: none;
+    }
+
+    .footer-col ul a:hover { color: #B0CEE2; }
+
+    .footer-bottom {
+      padding-top: 24px;
+      border-top: 1px solid rgba(176,206,226,0.1);
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      color: rgba(244,240,235,0.25);
+    }
+  </style>
+</head>
+<body>
+
+  <div id="cursor"></div>
+
+  <!-- NAVBAR -->
+  <nav>
+    <div class="logo">LINGS<span>CARS</span></div>
+    <ul class="nav-links">
+      <li><a href="#">Personal Leasing</a></li>
+      <li><a href="#">Business Leasing</a></li>
+      <li><a href="#">Special Offers</a></li>
+      <li><a href="#">How It Works</a></li>
+      <li><a href="#">Contact</a></li>
+    </ul>
+    <button class="nav-btn">Get a Quote</button>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <img src="https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=1800&q=80" alt="Hero Car"/>
+    <div class="hero-overlay">
+      <p class="hero-tag">UK Contract Hire &amp; Car Leasing</p>
+      <h1>Drive What<br><span>You Love.</span></h1>
+      <p>Over 1,500 cars on personal &amp; business lease. Transparent pricing, free delivery, no hidden fees.</p>
+      <div class="hero-btns">
+        <button class="btn-orange">Browse Cars</button>
+        <button class="btn-outline">How It Works</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATS BAR -->
+  <div class="stats-bar reveal">
+    <div class="stat-item"><div class="number">1,500+</div><div class="label">Cars Available</div></div>
+    <div class="stat-item"><div class="number">40,000+</div><div class="label">Happy Drivers</div></div>
+    <div class="stat-item"><div class="number">4.9 ★</div><div class="label">Trustpilot Rating</div></div>
+    <div class="stat-item"><div class="number">£0</div><div class="label">Hidden Fees</div></div>
+  </div>
+
+  <!-- SEARCH BAR -->
+  <div class="search-bar reveal">
+    <p>Find Your Perfect Car</p>
+    <div class="search-inputs">
+      <select>
+        <option>All Makes</option>
+        <option>Audi</option>
+        <option>BMW</option>
+        <option>Ford</option>
+        <option>Mercedes</option>
+        <option>Tesla</option>
+        <option>Volkswagen</option>
+        <option>Volvo</option>
+      </select>
+      <select>
+        <option>Body Style</option>
+        <option>Hatchback</option>
+        <option>SUV</option>
+        <option>Saloon</option>
+        <option>Estate</option>
+        <option>Convertible</option>
+      </select>
+      <select>
+        <option>Fuel Type</option>
+        <option>Petrol</option>
+        <option>Diesel</option>
+        <option>Electric</option>
+        <option>Hybrid</option>
+      </select>
+      <select>
+        <option>Monthly Budget</option>
+        <option>Under £200</option>
+        <option>£200 – £300</option>
+        <option>£300 – £500</option>
+        <option>£500+</option>
+      </select>
+      <button>Search →</button>
+    </div>
+  </div>
+
+  <!-- FEATURED CARS -->
+  <div class="section reveal">
+    <p class="section-sub">Handpicked Deals</p>
+    <h2 class="section-title">Featured <span>Cars</span></h2>
+    <div class="cars-grid">
+
+      <div class="car-card">
+        <img src="https://images.unsplash.com/photo-1616422285623-13ff0162193c?w=600&q=80" alt="VW Golf GTI"/>
+        <div class="car-info">
+          <p class="car-make">Volkswagen</p>
+          <h3 class="car-name">Golf GTI</h3>
+          <p class="car-details">Petrol · Manual / DSG · 5-Door · 245 bhp</p>
+          <div class="car-footer">
+            <div class="car-price">£289<span>per month + VAT</span></div>
+            <button class="card-btn">Get Quote</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="car-card">
+        <img src="https://images.unsplash.com/photo-1555215695-3004980ad54e?w=600&q=80" alt="BMW 3 Series"/>
+        <div class="car-info">
+          <p class="car-make">BMW</p>
+          <h3 class="car-name">3 Series</h3>
+          <p class="car-details">Diesel · Automatic · Saloon · 190 bhp</p>
+          <div class="car-footer">
+            <div class="car-price">£345<span>per month + VAT</span></div>
+            <button class="card-btn">Get Quote</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="car-card">
+        <img src="https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=600&q=80" alt="Tesla Model 3"/>
+        <div class="car-info">
+          <p class="car-make">Tesla</p>
+          <h3 class="car-name">Model 3</h3>
+          <p class="car-details">Electric · Auto · 358mi Range · 283 bhp</p>
+          <div class="car-footer">
+            <div class="car-price">£419<span>per month + VAT</span></div>
+            <button class="card-btn">Get Quote</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="car-card">
+        <img src="https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=600&q=80" alt="Mercedes C-Class"/>
+        <div class="car-info">
+          <p class="car-make">Mercedes-Benz</p>
+          <h3 class="car-name">C-Class</h3>
+          <p class="car-details">Petrol MHEV · Automatic · Saloon · 204 bhp</p>
+          <div class="car-footer">
+            <div class="car-price">£479<span>per month + VAT</span></div>
+            <button class="card-btn">Get Quote</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="car-card">
+        <img src="https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=600&q=80" alt="Audi A3"/>
+        <div class="car-info">
+          <p class="car-make">Audi</p>
+          <h3 class="car-name">A3 Sportback</h3>
+          <p class="car-details">Petrol · S Tronic · 5-Door · 150 bhp</p>
+          <div class="car-footer">
+            <div class="car-price">£312<span>per month + VAT</span></div>
+            <button class="card-btn">Get Quote</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="car-card">
+        <img src="https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=600&q=80" alt="Ford Puma ST"/>
+        <div class="car-info">
+          <p class="car-make">Ford</p>
+          <h3 class="car-name">Puma ST</h3>
+          <p class="car-details">Petrol · Manual · SUV · 200 bhp</p>
+          <div class="car-footer">
+            <div class="car-price">£249<span>per month + VAT</span></div>
+            <button class="card-btn">Get Quote</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div class="how-section reveal">
+    <p class="section-sub">Simple Process</p>
+    <h2 class="section-title">How It <span>Works</span></h2>
+    <div class="steps-grid">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-title">Choose Your Car</div>
+        <p class="step-desc">Browse over 1,500 vehicles and filter by make, model, fuel type and budget.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-title">Get a Quote</div>
+        <p class="step-desc">Set your contract length, mileage and initial rental. All pricing is fully transparent.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-title">Apply Online</div>
+        <p class="step-desc">Complete your application in minutes. We process your credit check quickly.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <div class="step-title">Drive Away</div>
+        <p class="step-desc">Your car is delivered to your door. Road tax and manufacturer warranty included.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- BROWSE BY CATEGORY -->
+  <div class="section reveal">
+    <p class="section-sub">The Range</p>
+    <h2 class="section-title">Cars for <span>Every Driver</span></h2>
+    <div class="gallery-grid">
+      <div class="g-item">
+        <img src="https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=900&q=80" alt="Sports"/>
+        <div class="g-label">Sports &amp; Performance</div>
+      </div>
+      <div class="g-item">
+        <img src="https://images.unsplash.com/photo-1593941707874-ef25b8b4a92b?w=600&q=80" alt="Electric"/>
+        <div class="g-label">Electric</div>
+      </div>
+      <div class="g-item">
+        <img src="https://images.unsplash.com/photo-1502877338535-766e1452684a?w=600&q=80" alt="Luxury"/>
+        <div class="g-label">Luxury</div>
+      </div>
+      <div class="g-item">
+        <img src="https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=600&q=80" alt="Family"/>
+        <div class="g-label">Family &amp; Estate</div>
+      </div>
+      <div class="g-item">
+        <img src="https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=600&q=80" alt="SUV"/>
+        <div class="g-label">SUVs</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TESTIMONIALS -->
+  <div class="section reveal" style="background-color:#424048; padding-top:70px; padding-bottom:70px;">
+    <p class="section-sub">Customer Reviews</p>
+    <h2 class="section-title">What Drivers <span>Say</span></h2>
+    <div class="testi-grid">
+      <div class="testi-card">
+        <p class="testi-text">"The smoothest car leasing experience I've ever had. Transparent pricing and delivery was right on time. Will definitely come back."</p>
+        <div class="testi-name">Richard F. — London</div>
+        <div class="testi-stars">★★★★★</div>
+      </div>
+      <div class="testi-card">
+        <p class="testi-text">"Got a brilliant deal on a Golf GTI. The team answered all my questions quickly. Far better than any dealership I've visited."</p>
+        <div class="testi-name">Deborah W. — Manchester</div>
+        <div class="testi-stars">★★★★★</div>
+      </div>
+      <div class="testi-card">
+        <p class="testi-text">"My third car through Lings. Every time has been completely faultless. The business leasing team saved us thousands on our fleet."</p>
+        <div class="testi-name">Duncan B. — Edinburgh</div>
+        <div class="testi-stars">★★★★★</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA BANNER -->
+  <div class="cta-banner reveal">
+    <img src="https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=1800&q=80" alt="CTA"/>
+    <div class="cta-overlay">
+      <h2>Your Next Car <span>Starts Here.</span></h2>
+      <p>Join 40,000+ drivers. Transparent pricing, free UK delivery, no hidden fees.</p>
+      <button class="btn-orange">Get Your Free Quote</button>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo">LINGS<span>CARS</span></div>
+        <p class="footer-about">The UK's favourite car leasing specialist. Run by Ling Valentine from Gateshead since 2004. Honest pricing and a team that genuinely cares.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Leasing</h4>
+        <ul>
+          <li><a href="#">Personal Leasing</a></li>
+          <li><a href="#">Business Leasing</a></li>
+          <li><a href="#">Fleet Leasing</a></li>
+          <li><a href="#">Special Offers</a></li>
+          <li><a href="#">Electric Cars</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#">About Ling</a></li>
+          <li><a href="#">How It Works</a></li>
+          <li><a href="#">FAQs</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Press</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Support</h4>
+        <ul>
+          <li><a href="#">Contact Us</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms &amp; Conditions</a></li>
+          <li><a href="#">Complaints</a></li>
+          <li><a href="#">Sitemap</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 LingsCars.com · FCA Authorised &amp; Regulated</span>
+      <span>Student Redesign — Visual Interface Design Module 1</span>
+    </div>
+  </footer>
+
+  <script>
+    // ── CUSTOM CURSOR ──
+    const cursor = document.getElementById('cursor');
+    document.addEventListener('mousemove', function(e) {
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top  = e.clientY + 'px';
+    });
+    document.querySelectorAll('a, button, .car-card, .g-item, .testi-card, .step').forEach(function(el) {
+      el.addEventListener('mouseenter', function() { cursor.classList.add('grow'); });
+      el.addEventListener('mouseleave', function() { cursor.classList.remove('grow'); });
+    });
+
+    // ── SCROLL REVEAL ──
+    const revealEls = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    revealEls.forEach(function(el) { observer.observe(el); });
+  </script>
+
+</body>
+</html>
